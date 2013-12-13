@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+
+	<context-param>
+		<param-name>resteasy.scan</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<param-name>resteasy.servlet.mapping.prefix</param-name>
+		<param-value>/rest</param-value>
+	</context-param>
+
+	<!--swagger -->
+	<context-param>
+		<param-name>javax.ws.rs.core.Application</param-name>
+		<param-value>org.jboss.manager.utils.MyApplication</param-value>
+	</context-param>
+	<context-param>
+		<param-name>resteasy.resources</param-name>
+		<param-value>org.jboss.manager.ServersController,org.jboss.manager.ManagementController,com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON</param-value>
+	</context-param>
+	<context-param>
+		<param-name>resteasy.providers</param-name>
+		<param-value>com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider,com.wordnik.swagger.jaxrs.listing.ResourceListingProvider</param-value>
+	</context-param>
+	<!-- org.jboss.manager.utils.JacksonJsonProvider - not required if your rest service returns json and doesnt rely on resteasy to perform the unmarshal -->
+
+	<listener>
+		<listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
+	</listener>
+
+	<servlet>
+		<servlet-name>version</servlet-name>
+		<servlet-class>org.jboss.manager.utils.VersionServlet</servlet-class>
+	</servlet>
+
+	<servlet>
+		<servlet-name>resteasy</servlet-name>
+		<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<!--swagger -->
+	<!-- -->
+	<servlet>
+		<servlet-name>DefaultJaxrsConfig</servlet-name>
+		<servlet-class>com.wordnik.swagger.jaxrs.config.DefaultJaxrsConfig</servlet-class>
+		<init-param>
+			<param-name>api.version</param-name>
+			<param-value>1.0.0</param-value>
+		</init-param>
+		<init-param>
+			<param-name>swagger.api.basepath</param-name>
+			<param-value>http://localhost:8081/jboss-estate-manager/rest</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>resteasy</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>version</servlet-name>
+		<url-pattern>/version</url-pattern>
+	</servlet-mapping>
+
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+</web-app>
